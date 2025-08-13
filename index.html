@@ -4,26 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crypto Dashboard - Home</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <base href="/">
 </head>
 <body>
     <header>
-        <h1>🚀 Crypto Dashboard</h1>
-        <nav>
-            <a href="index.html" class="active">Home</a>
-            <a href="prices.html">Prices</a>
-            <a href="portfolio.html">Portfolio</a>
-            <a href="news.html">News</a>
-        </nav>
+        <div class="container">
+            <h1>🚀 Crypto Dashboard</h1>
+            <nav>
+                <a href="index.html" class="active">Home</a>
+                <a href="prices.html">Prices</a>
+                <a href="portfolio.html">Portfolio</a>
+                <a href="news.html">News</a>
+            </nav>
+        </div>
     </header>
 
-    <main>
+    <main class="container">
         <section class="hero">
             <h2>Track Your Favorite Cryptocurrencies</h2>
             <p>Real-time prices, portfolio tracking, and latest news in one place</p>
             <div class="cta-buttons">
-                <button onclick="window.location.href='prices.html'">View Prices</button>
-                <button onclick="window.location.href='portfolio.html'">My Portfolio</button>
+                <a href="prices.html" class="btn">View Prices</a>
+                <a href="portfolio.html" class="btn">My Portfolio</a>
             </div>
         </section>
 
@@ -36,9 +39,11 @@
     </main>
 
     <footer>
-        <p>&copy; 2023 Crypto Dashboard. All data provided by CoinGecko API.</p>
+        <div class="container">
+            <p>&copy; 2023 Crypto Dashboard</p>
+        </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="assets/js/script.js"></script>
 </body>
 </html>
