@@ -3,47 +3,558 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Dashboard - Home</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <base href="/">
+    <title>Professional Web App</title>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4cc9f0;
+            --warning-color: #f8961e;
+            --danger-color: #f72585;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #e1e5eb;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: #6c757d;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .card-text {
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+        }
+
+        .feature {
+            flex: 1;
+            min-width: 250px;
+            padding: 1.5rem;
+            margin: 0.5rem;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-text {
+            color: #6c757d;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid #e1e5eb;
+            color: #6c757d;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+            background: none;
+            border: none;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.25);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            nav ul {
+                display: none;
+            }
+            
+            .features {
+                flex-direction: column;
+            }
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>🚀 Crypto Dashboard</h1>
+    <div class="container">
+        <header>
+            <div class="logo">ProApp</div>
             <nav>
-                <a href="index.html" class="active">Home</a>
-                <a href="prices.html">Prices</a>
-                <a href="portfolio.html">Portfolio</a>
-                <a href="news.html">News</a>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
             </nav>
-        </div>
-    </header>
+            <button class="btn" id="openModal">Get Started</button>
+        </header>
 
-    <main class="container">
         <section class="hero">
-            <h2>Track Your Favorite Cryptocurrencies</h2>
-            <p>Real-time prices, portfolio tracking, and latest news in one place</p>
-            <div class="cta-buttons">
-                <a href="prices.html" class="btn">View Prices</a>
-                <a href="portfolio.html" class="btn">My Portfolio</a>
+            <h1>Build Amazing Experiences</h1>
+            <p>Our platform helps you create professional web applications with ease. Focus on your business while we handle the technology.</p>
+            <div>
+                <button class="btn">Learn More</button>
+                <button class="btn btn-outline">View Demo</button>
             </div>
         </section>
 
-        <section class="top-cryptos">
-            <h3>Top Cryptocurrencies</h3>
-            <div id="top-crypto-list" class="crypto-grid">
-                <!-- Filled by JavaScript -->
+        <section id="features" class="features">
+            <div class="feature slide-up">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">Lightning Fast</h3>
+                <p class="feature-text">Optimized for performance with minimal load times and smooth animations.</p>
+            </div>
+            <div class="feature slide-up">
+                <div class="feature-icon">🔒</div>
+                <h3 class="feature-title">Secure</h3>
+                <p class="feature-text">Enterprise-grade security to protect your data and your customers.</p>
+            </div>
+            <div class="feature slide-up">
+                <div class="feature-icon">🔄</div>
+                <h3 class="feature-title">Scalable</h3>
+                <p class="feature-text">Grows with your business, handling millions of requests with ease.</p>
             </div>
         </section>
-    </main>
+
+        <section id="products">
+            <h2 style="margin-bottom: 2rem; text-align: center;">Our Products</h2>
+            <div class="card-grid">
+                <div class="card fade-in">
+                    <img src="https://source.unsplash.com/random/600x400?tech" alt="Product 1" class="card-img">
+                    <div class="card-body">
+                        <h3 class="card-title">Web Platform</h3>
+                        <p class="card-text">Complete solution for building modern web applications with all the features you need.</p>
+                        <button class="btn">View Details</button>
+                    </div>
+                </div>
+                <div class="card fade-in">
+                    <img src="https://source.unsplash.com/random/600x400?mobile" alt="Product 2" class="card-img">
+                    <div class="card-body">
+                        <h3 class="card-title">Mobile App</h3>
+                        <p class="card-text">Native mobile experience with cross-platform compatibility and offline support.</p>
+                        <button class="btn">View Details</button>
+                    </div>
+                </div>
+                <div class="card fade-in">
+                    <img src="https://source.unsplash.com/random/600x400?analytics" alt="Product 3" class="card-img">
+                    <div class="card-body">
+                        <h3 class="card-title">Analytics Suite</h3>
+                        <p class="card-text">Powerful insights and data visualization to help you make better business decisions.</p>
+                        <button class="btn">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="modal" id="signupModal">
+            <div class="modal-content">
+                <button class="close-modal" id="closeModal">&times;</button>
+                <h2 style="margin-bottom: 1.5rem;">Create Your Account</h2>
+                <form id="signupForm">
+                    <div id="formMessage" class="alert" style="display: none;"></div>
+                    <div class="form-group">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" id="name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" id="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <footer>
-        <div class="container">
-            <p>&copy; 2023 Crypto Dashboard</p>
-        </div>
+        <p>&copy; 2023 ProApp. All rights reserved.</p>
     </footer>
 
-    <script src="assets/js/script.js"></script>
+    <script>
+        // High-level application controller
+        class AppController {
+            constructor() {
+                this.initModal();
+                this.initForm();
+                this.initScrollAnimations();
+                this.initServiceWorker();
+            }
+
+            // Initialize modal functionality
+            initModal() {
+                const modal = document.getElementById('signupModal');
+                const openBtn = document.getElementById('openModal');
+                const closeBtn = document.getElementById('closeModal');
+
+                openBtn.addEventListener('click', () => {
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                });
+
+                closeBtn.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                });
+
+                window.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            }
+
+            // Handle form submission
+            initForm() {
+                const form = document.getElementById('signupForm');
+                const formMessage = document.getElementById('formMessage');
+
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+
+                    // Simulate API call
+                    try {
+                        const response = await this.mockApiCall({ name, email, password });
+                        this.showFormMessage('success', 'Account created successfully!');
+                        form.reset();
+                        
+                        // Close modal after 2 seconds
+                        setTimeout(() => {
+                            document.getElementById('signupModal').style.display = 'none';
+                            document.body.style.overflow = 'auto';
+                            formMessage.style.display = 'none';
+                        }, 2000);
+                    } catch (error) {
+                        this.showFormMessage('danger', error.message);
+                    }
+                });
+            }
+
+            // Mock API call for demonstration
+            async mockApiCall(data) {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        // Simulate validation
+                        if (!data.email.includes('@')) {
+                            reject(new Error('Please enter a valid email address'));
+                            return;
+                        }
+                        
+                        if (data.password.length < 6) {
+                            reject(new Error('Password must be at least 6 characters'));
+                            return;
+                        }
+                        
+                        // Simulate successful response
+                        resolve({
+                            status: 'success',
+                            data: {
+                                id: Math.floor(Math.random() * 10000),
+                                ...data
+                            }
+                        });
+                    }, 1000);
+                });
+            }
+
+            // Show form status message
+            showFormMessage(type, message) {
+                const formMessage = document.getElementById('formMessage');
+                formMessage.textContent = message;
+                formMessage.className = `alert alert-${type}`;
+                formMessage.style.display = 'block';
+            }
+
+            // Initialize scroll animations
+            initScrollAnimations() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('fade-in');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, {
+                    threshold: 0.1
+                });
+
+                document.querySelectorAll('.card, .feature').forEach(el => {
+                    observer.observe(el);
+                });
+            }
+
+            // Register service worker for PWA capabilities
+            initServiceWorker() {
+                if ('serviceWorker' in navigator) {
+                    window.addEventListener('load', () => {
+                        navigator.serviceWorker.register('/sw.js').then(registration => {
+                            console.log('ServiceWorker registration successful');
+                        }).catch(err => {
+                            console.log('ServiceWorker registration failed: ', err);
+                        });
+                    });
+                }
+            }
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new AppController();
+        });
+    </script>
 </body>
 </html>
