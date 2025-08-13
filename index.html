@@ -3,19 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Web App</title>
+    <title>AnimeDash - Anime Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4895ef;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --success-color: #4cc9f0;
-            --warning-color: #f8961e;
-            --danger-color: #f72585;
+            --primary: #ff7b72;
+            --secondary: #79c0ff;
+            --accent: #d2a8ff;
+            --dark: #0d1117;
+            --dark-gray: #161b22;
+            --light-gray: #21262d;
+            --text: #c9d1d9;
+            --text-light: #8b949e;
+            --success: #3fb950;
+            --warning: #d29922;
+            --danger: #f85149;
             --border-radius: 8px;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             --transition: all 0.3s ease;
         }
 
@@ -27,15 +31,15 @@
         }
 
         body {
-            background-color: #f5f7fa;
-            color: var(--dark-color);
+            background-color: var(--dark);
+            color: var(--text);
             line-height: 1.6;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1rem;
         }
 
         header {
@@ -43,517 +47,851 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem 0;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid #e1e5eb;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
         }
 
         .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             font-size: 1.8rem;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--primary);
         }
 
-        nav ul {
+        .logo i {
+            color: var(--danger);
+        }
+
+        .search-bar {
             display: flex;
-            list-style: none;
+            width: 100%;
+            max-width: 500px;
         }
 
-        nav ul li {
-            margin-left: 1.5rem;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: var(--dark-color);
-            font-weight: 500;
+        .search-bar input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background-color: var(--dark-gray);
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            color: var(--text);
+            font-size: 1rem;
             transition: var(--transition);
         }
 
-        nav ul li a:hover {
-            color: var(--primary-color);
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 123, 114, 0.3);
+        }
+
+        .search-bar button {
+            padding: 0 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .search-bar button:hover {
+            background-color: #ff6b61;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
         .btn {
-            display: inline-block;
             padding: 0.6rem 1.2rem;
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--light-gray);
+            color: var(--text);
             border: none;
             border-radius: var(--border-radius);
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
+            font-weight: 600;
             transition: var(--transition);
-            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .btn:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: var(--box-shadow);
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #ff6b61;
         }
 
         .btn-outline {
             background-color: transparent;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
+            border: 1px solid var(--light-gray);
         }
 
         .btn-outline:hover {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--light-gray);
         }
 
-        .hero {
-            text-align: center;
-            padding: 4rem 0;
-            margin-bottom: 3rem;
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
         }
 
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: var(--dark-color);
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
         }
 
-        .hero p {
+        .sidebar {
+            background-color: var(--dark-gray);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .sidebar-title {
             font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-            color: #6c757d;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-title i {
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--light-gray);
+            color: var(--text);
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--text);
+        }
+
+        .section-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
         }
 
         .card {
-            background-color: white;
+            background-color: var(--dark-gray);
             border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: var(--box-shadow);
             transition: var(--transition);
+            position: relative;
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--box-shadow);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: var(--danger);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius);
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 1;
         }
 
         .card-img {
             width: 100%;
-            height: 200px;
+            height: 250px;
             object-fit: cover;
         }
 
         .card-body {
-            padding: 1.5rem;
+            padding: 1rem;
         }
 
         .card-title {
-            font-size: 1.3rem;
+            font-size: 1rem;
             margin-bottom: 0.5rem;
-            color: var(--dark-color);
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .card-text {
-            color: #6c757d;
-            margin-bottom: 1rem;
-        }
-
-        .features {
+        .card-meta {
             display: flex;
-            flex-wrap: wrap;
             justify-content: space-between;
-            margin-bottom: 3rem;
+            color: var(--text-light);
+            font-size: 0.85rem;
         }
 
-        .feature {
-            flex: 1;
-            min-width: 250px;
-            padding: 1.5rem;
-            margin: 0.5rem;
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            text-align: center;
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        .feature-title {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .feature-text {
-            color: #6c757d;
-        }
-
-        footer {
-            text-align: center;
-            padding: 2rem 0;
-            margin-top: 3rem;
-            border-top: 1px solid #e1e5eb;
-            color: #6c757d;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
+        .card-rating {
+            display: flex;
             align-items: center;
+            gap: 0.25rem;
+            color: var(--warning);
         }
 
-        .modal-content {
-            background-color: white;
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            position: relative;
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.75rem;
         }
 
-        .close-modal {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #6c757d;
+        .card-btn {
             background: none;
             border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.85rem;
         }
 
-        .form-group {
-            margin-bottom: 1.5rem;
+        .card-btn:hover {
+            color: var(--primary);
         }
 
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+        .card-btn.favorite {
+            color: var(--danger);
         }
 
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ced4da;
+        .trending-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .trending-item {
+            display: flex;
+            gap: 1rem;
+            background-color: var(--dark-gray);
             border-radius: var(--border-radius);
-            font-size: 1rem;
+            overflow: hidden;
             transition: var(--transition);
         }
 
-        .form-control:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.25);
+        .trending-item:hover {
+            transform: translateX(5px);
         }
 
-        .alert {
-            padding: 1rem;
+        .trending-rank {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-light);
+            background-color: var(--light-gray);
+        }
+
+        .trending-img {
+            width: 80px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .trending-content {
+            flex: 1;
+            padding: 0.75rem 0.75rem 0.75rem 0;
+        }
+
+        .trending-title {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+            color: var(--text);
+        }
+
+        .trending-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .trending-description {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: var(--dark-gray);
             border-radius: var(--border-radius);
-            margin-bottom: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
-        .alert-success {
-            background-color: #d1fae5;
-            color: #065f46;
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--text-light);
         }
 
-        .alert-danger {
-            background-color: #fee2e2;
-            color: #b91c1c;
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.85rem;
+        }
+
+        .stat-change.up {
+            color: var(--success);
+        }
+
+        .stat-change.down {
+            color: var(--danger);
+        }
+
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.2rem;
+            .dashboard {
+                grid-template-columns: 1fr;
             }
-            
-            nav ul {
+
+            .search-bar {
+                max-width: 100%;
+                margin: 1rem 0;
+            }
+
+            .user-actions {
                 display: none;
             }
-            
-            .features {
-                flex-direction: column;
+
+            .card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
         }
 
-        /* Animation classes */
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-
+        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
         }
 
         .slide-up {
             animation: slideUp 0.5s ease-out;
         }
 
-        @keyframes slideUp {
-            from { 
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Loading skeleton */
+        .skeleton {
+            background-color: var(--light-gray);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="logo">ProApp</div>
-            <nav>
-                <ul>
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#products">Products</a></li>
-                    <li><a href="#pricing">Pricing</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-            <button class="btn" id="openModal">Get Started</button>
+            <div class="logo">
+                <i class="fas fa-dragon"></i>
+                <span>AnimeDash</span>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search for anime..." id="searchInput">
+                <button id="searchButton"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="user-actions">
+                <button class="btn btn-outline"><i class="fas fa-bell"></i></button>
+                <button class="btn btn-outline"><i class="fas fa-cog"></i></button>
+                <img src="https://i.pravatar.cc/40" alt="User" class="avatar">
+            </div>
         </header>
 
-        <section class="hero">
-            <h1>Build Amazing Experiences</h1>
-            <p>Our platform helps you create professional web applications with ease. Focus on your business while we handle the technology.</p>
-            <div>
-                <button class="btn">Learn More</button>
-                <button class="btn btn-outline">View Demo</button>
-            </div>
-        </section>
+        <div class="dashboard">
+            <aside class="sidebar">
+                <h2 class="sidebar-title"><i class="fas fa-compass"></i> Navigation</h2>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link"><i class="fas fa-fire"></i> Trending</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link"><i class="fas fa-heart"></i> Favorites</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link"><i class="fas fa-bookmark"></i> Watchlist</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link"><i class="fas fa-history"></i> History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link"><i class="fas fa-tag"></i> Genres</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link"><i class="fas fa-calendar"></i> Seasonal</a>
+                    </li>
+                </ul>
 
-        <section id="features" class="features">
-            <div class="feature slide-up">
-                <div class="feature-icon">⚡</div>
-                <h3 class="feature-title">Lightning Fast</h3>
-                <p class="feature-text">Optimized for performance with minimal load times and smooth animations.</p>
-            </div>
-            <div class="feature slide-up">
-                <div class="feature-icon">🔒</div>
-                <h3 class="feature-title">Secure</h3>
-                <p class="feature-text">Enterprise-grade security to protect your data and your customers.</p>
-            </div>
-            <div class="feature slide-up">
-                <div class="feature-icon">🔄</div>
-                <h3 class="feature-title">Scalable</h3>
-                <p class="feature-text">Grows with your business, handling millions of requests with ease.</p>
-            </div>
-        </section>
+                <h2 class="sidebar-title" style="margin-top: 2rem;"><i class="fas fa-tags"></i> Top Genres</h2>
+                <div class="genre-tags">
+                    <button class="btn btn-outline" style="margin: 0.25rem;">Action</button>
+                    <button class="btn btn-outline" style="margin: 0.25rem;">Adventure</button>
+                    <button class="btn btn-outline" style="margin: 0.25rem;">Comedy</button>
+                    <button class="btn btn-outline" style="margin: 0.25rem;">Drama</button>
+                    <button class="btn btn-outline" style="margin: 0.25rem;">Fantasy</button>
+                    <button class="btn btn-outline" style="margin: 0.25rem;">Romance</button>
+                </div>
+            </aside>
 
-        <section id="products">
-            <h2 style="margin-bottom: 2rem; text-align: center;">Our Products</h2>
-            <div class="card-grid">
-                <div class="card fade-in">
-                    <img src="https://source.unsplash.com/random/600x400?tech" alt="Product 1" class="card-img">
-                    <div class="card-body">
-                        <h3 class="card-title">Web Platform</h3>
-                        <p class="card-text">Complete solution for building modern web applications with all the features you need.</p>
-                        <button class="btn">View Details</button>
+            <main class="main-content">
+                <section class="stats-grid">
+                    <div class="stat-card slide-up">
+                        <span class="stat-title">Total Anime Watched</span>
+                        <span class="stat-value">247</span>
+                        <span class="stat-change up"><i class="fas fa-arrow-up"></i> 12% this month</span>
                     </div>
-                </div>
-                <div class="card fade-in">
-                    <img src="https://source.unsplash.com/random/600x400?mobile" alt="Product 2" class="card-img">
-                    <div class="card-body">
-                        <h3 class="card-title">Mobile App</h3>
-                        <p class="card-text">Native mobile experience with cross-platform compatibility and offline support.</p>
-                        <button class="btn">View Details</button>
+                    <div class="stat-card slide-up">
+                        <span class="stat-title">Current Watching</span>
+                        <span class="stat-value">8</span>
+                        <span class="stat-change down"><i class="fas fa-arrow-down"></i> 2 from last week</span>
                     </div>
-                </div>
-                <div class="card fade-in">
-                    <img src="https://source.unsplash.com/random/600x400?analytics" alt="Product 3" class="card-img">
-                    <div class="card-body">
-                        <h3 class="card-title">Analytics Suite</h3>
-                        <p class="card-text">Powerful insights and data visualization to help you make better business decisions.</p>
-                        <button class="btn">View Details</button>
+                    <div class="stat-card slide-up">
+                        <span class="stat-title">Favorite Genre</span>
+                        <span class="stat-value">Action</span>
+                        <span class="stat-title">32% of your watches</span>
                     </div>
-                </div>
-            </div>
-        </section>
+                    <div class="stat-card slide-up">
+                        <span class="stat-title">Average Rating</span>
+                        <span class="stat-value">8.4</span>
+                        <span class="stat-change up"><i class="fas fa-arrow-up"></i> 0.3 from last year</span>
+                    </div>
+                </section>
 
-        <div class="modal" id="signupModal">
-            <div class="modal-content">
-                <button class="close-modal" id="closeModal">&times;</button>
-                <h2 style="margin-bottom: 1.5rem;">Create Your Account</h2>
-                <form id="signupForm">
-                    <div id="formMessage" class="alert" style="display: none;"></div>
-                    <div class="form-group">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" id="name" class="form-control" required>
+                <section>
+                    <div class="section-header">
+                        <h2 class="section-title">Currently Airing</h2>
+                        <a href="#" class="section-link">View All <i class="fas fa-chevron-right"></i></a>
                     </div>
-                    <div class="form-group">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" id="email" class="form-control" required>
+                    <div class="card-grid" id="airingAnime">
+                        <!-- Anime cards will be inserted here by JavaScript -->
                     </div>
-                    <div class="form-group">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" class="form-control" required>
+                </section>
+
+                <section>
+                    <div class="section-header">
+                        <h2 class="section-title">Your Favorites</h2>
+                        <a href="#" class="section-link">View All <i class="fas fa-chevron-right"></i></a>
                     </div>
-                    <button type="submit" class="btn" style="width: 100%;">Sign Up</button>
-                </form>
-            </div>
+                    <div class="card-grid" id="favoriteAnime">
+                        <!-- Favorite anime cards will be inserted here by JavaScript -->
+                    </div>
+                </section>
+
+                <section>
+                    <div class="section-header">
+                        <h2 class="section-title">Top Trending This Week</h2>
+                        <a href="#" class="section-link">View All <i class="fas fa-chevron-right"></i></a>
+                    </div>
+                    <div class="trending-list" id="trendingAnime">
+                        <!-- Trending anime list will be inserted here by JavaScript -->
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
 
-    <footer>
-        <p>&copy; 2023 ProApp. All rights reserved.</p>
-    </footer>
-
     <script>
-        // High-level application controller
-        class AppController {
+        // Anime Dashboard Application
+        class AnimeDashboard {
             constructor() {
-                this.initModal();
-                this.initForm();
-                this.initScrollAnimations();
-                this.initServiceWorker();
+                this.favorites = JSON.parse(localStorage.getItem('animeFavorites')) || [];
+                this.init();
             }
 
-            // Initialize modal functionality
-            initModal() {
-                const modal = document.getElementById('signupModal');
-                const openBtn = document.getElementById('openModal');
-                const closeBtn = document.getElementById('closeModal');
-
-                openBtn.addEventListener('click', () => {
-                    modal.style.display = 'flex';
-                    document.body.style.overflow = 'hidden';
-                });
-
-                closeBtn.addEventListener('click', () => {
-                    modal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                });
-
-                window.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.style.display = 'none';
-                        document.body.style.overflow = 'auto';
-                    }
-                });
+            async init() {
+                this.loadSkeleton();
+                await this.loadAiringAnime();
+                await this.loadFavoriteAnime();
+                await this.loadTrendingAnime();
+                this.setupEventListeners();
             }
 
-            // Handle form submission
-            initForm() {
-                const form = document.getElementById('signupForm');
-                const formMessage = document.getElementById('formMessage');
+            loadSkeleton() {
+                // Airing anime skeleton
+                const airingContainer = document.getElementById('airingAnime');
+                airingContainer.innerHTML = Array(6).fill(`
+                    <div class="card skeleton" style="height: 350px;"></div>
+                `).join('');
 
-                form.addEventListener('submit', async (e) => {
-                    e.preventDefault();
+                // Favorites skeleton
+                const favoritesContainer = document.getElementById('favoriteAnime');
+                favoritesContainer.innerHTML = Array(4).fill(`
+                    <div class="card skeleton" style="height: 350px;"></div>
+                `).join('');
+
+                // Trending skeleton
+                const trendingContainer = document.getElementById('trendingAnime');
+                trendingContainer.innerHTML = Array(5).fill(`
+                    <div class="trending-item skeleton" style="height: 100px;"></div>
+                `).join('');
+            }
+
+            async fetchAnimeData(endpoint) {
+                try {
+                    // In a real app, this would be an actual API call
+                    // For demo, we're using mock data
+                    await new Promise(resolve => setTimeout(resolve, 800));
                     
-                    const name = document.getElementById('name').value;
-                    const email = document.getElementById('email').value;
-                    const password = document.getElementById('password').value;
+                    const mockData = {
+                        'airing': this.generateMockAnime(6, true),
+                        'favorites': this.favorites.length > 0 
+                            ? this.favorites 
+                            : this.generateMockAnime(4, false).map(anime => ({ ...anime, isFavorite: true })),
+                        'trending': this.generateTrendingAnime(5)
+                    };
 
-                    // Simulate API call
-                    try {
-                        const response = await this.mockApiCall({ name, email, password });
-                        this.showFormMessage('success', 'Account created successfully!');
-                        form.reset();
-                        
-                        // Close modal after 2 seconds
-                        setTimeout(() => {
-                            document.getElementById('signupModal').style.display = 'none';
-                            document.body.style.overflow = 'auto';
-                            formMessage.style.display = 'none';
-                        }, 2000);
-                    } catch (error) {
-                        this.showFormMessage('danger', error.message);
+                    return mockData[endpoint] || [];
+                } catch (error) {
+                    console.error('Error fetching anime data:', error);
+                    return [];
+                }
+            }
+
+            generateMockAnime(count, includeBadge) {
+                const titles = [
+                    "Demon Slayer: Kimetsu no Yaiba",
+                    "Jujutsu Kaisen",
+                    "Attack on Titan: Final Season",
+                    "My Hero Academia",
+                    "Chainsaw Man",
+                    "Spy x Family",
+                    "One Piece",
+                    "Vinland Saga",
+                    "Dr. Stone",
+                    "The Rising of the Shield Hero"
+                ];
+
+                const genres = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Romance", "Sci-Fi", "Horror"];
+
+                return Array(count).fill().map((_, i) => ({
+                    id: `anime-${i}`,
+                    title: titles[i % titles.length],
+                    image: `https://source.unsplash.com/random/300x450?anime,${i}`,
+                    rating: (Math.random() * 2 + 7).toFixed(1),
+                    episodes: Math.floor(Math.random() * 24) + 1,
+                    genre: genres.slice(0, Math.floor(Math.random() * 3) + 1).join(', '),
+                    isNew: includeBadge ? Math.random() > 0.7 : false,
+                    isFavorite: this.favorites.some(fav => fav.id === `anime-${i}`)
+                }));
+            }
+
+            generateTrendingAnime(count) {
+                const titles = [
+                    "Oshi no Ko",
+                    "Hell's Paradise",
+                    "Mashle: Magic and Muscles",
+                    "The Ancient Magus' Bride",
+                    "Heavenly Delusion",
+                    "Skip and Loafer",
+                    "Dr. Stone: New World",
+                    "Insomniacs After School",
+                    "My Love Story with Yamada-kun at Lv999",
+                    "The Dangers in My Heart"
+                ];
+
+                const descriptions = [
+                    "A story about the dark side of the entertainment industry.",
+                    "Ninjas battle demons in a mystical paradise.",
+                    "In a world of magic, one boy has only muscles.",
+                    "A girl becomes the apprentice to a mysterious magus.",
+                    "Post-apocalyptic journey through a ruined world.",
+                    "Country girl navigates life in the big city.",
+                    "Science battles against the stone world.",
+                    "Two insomniacs find solace in each other.",
+                    "Gamer girl falls for a pro gamer at level 999.",
+                    "A dark comedy about middle school romance."
+                ];
+
+                return Array(count).fill().map((_, i) => ({
+                    id: `trending-${i}`,
+                    rank: i + 1,
+                    title: titles[i % titles.length],
+                    image: `https://source.unsplash.com/random/200x300?anime,${i + 10}`,
+                    rating: (Math.random() * 2 + 7).toFixed(1),
+                    episodes: Math.floor(Math.random() * 12) + 1,
+                    type: ["TV", "Movie", "OVA"][Math.floor(Math.random() * 3)],
+                    description: descriptions[i % descriptions.length]
+                }));
+            }
+
+            async loadAiringAnime() {
+                const animeList = await this.fetchAnimeData('airing');
+                const container = document.getElementById('airingAnime');
+                container.innerHTML = animeList.map(anime => `
+                    <div class="card fade-in">
+                        ${anime.isNew ? '<span class="card-badge">NEW</span>' : ''}
+                        <img src="${anime.image}" alt="${anime.title}" class="card-img">
+                        <div class="card-body">
+                            <h3 class="card-title">${anime.title}</h3>
+                            <div class="card-meta">
+                                <span>${anime.episodes} eps</span>
+                                <span class="card-rating">
+                                    <i class="fas fa-star"></i> ${anime.rating}
+                                </span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-btn ${anime.isFavorite ? 'favorite' : ''}" data-id="${anime.id}">
+                                    <i class="fas fa-heart"></i> Favorite
+                                </button>
+                                <button class="card-btn">
+                                    <i class="fas fa-plus"></i> List
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async loadFavoriteAnime() {
+                const animeList = await this.fetchAnimeData('favorites');
+                const container = document.getElementById('favoriteAnime');
+                
+                if (animeList.length === 0) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                            <i class="fas fa-heart" style="font-size: 2rem; color: var(--danger); margin-bottom: 1rem;"></i>
+                            <h3>No favorites yet</h3>
+                            <p>Add anime to your favorites by clicking the heart icon</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = animeList.map(anime => `
+                    <div class="card fade-in">
+                        <img src="${anime.image}" alt="${anime.title}" class="card-img">
+                        <div class="card-body">
+                            <h3 class="card-title">${anime.title}</h3>
+                            <div class="card-meta">
+                                <span>${anime.genre}</span>
+                                <span class="card-rating">
+                                    <i class="fas fa-star"></i> ${anime.rating}
+                                </span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="card-btn favorite" data-id="${anime.id}">
+                                    <i class="fas fa-heart"></i> Favorited
+                                </button>
+                                <button class="card-btn">
+                                    <i class="fas fa-play"></i> Watch
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async loadTrendingAnime() {
+                const animeList = await this.fetchAnimeData('trending');
+                const container = document.getElementById('trendingAnime');
+                container.innerHTML = animeList.map(anime => `
+                    <div class="trending-item fade-in">
+                        <div class="trending-rank">${anime.rank}</div>
+                        <img src="${anime.image}" alt="${anime.title}" class="trending-img">
+                        <div class="trending-content">
+                            <h3 class="trending-title">${anime.title}</h3>
+                            <div class="trending-meta">
+                                <span><i class="fas fa-star"></i> ${anime.rating}</span>
+                                <span><i class="fas fa-tv"></i> ${anime.type}</span>
+                                <span><i class="fas fa-list-ol"></i> ${anime.episodes} eps</span>
+                            </div>
+                            <p class="trending-description">${anime.description}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            setupEventListeners() {
+                // Search functionality
+                document.getElementById('searchButton').addEventListener('click', this.handleSearch.bind(this));
+                document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.handleSearch();
+                });
+
+                // Favorite buttons (event delegation)
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.card-btn')) {
+                        const btn = e.target.closest('.card-btn');
+                        if (btn.innerHTML.includes('Favorite')) {
+                            this.toggleFavorite(btn);
+                        }
                     }
                 });
             }
 
-            // Mock API call for demonstration
-            async mockApiCall(data) {
-                return new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        // Simulate validation
-                        if (!data.email.includes('@')) {
-                            reject(new Error('Please enter a valid email address'));
-                            return;
-                        }
-                        
-                        if (data.password.length < 6) {
-                            reject(new Error('Password must be at least 6 characters'));
-                            return;
-                        }
-                        
-                        // Simulate successful response
-                        resolve({
-                            status: 'success',
-                            data: {
-                                id: Math.floor(Math.random() * 10000),
-                                ...data
-                            }
-                        });
-                    }, 1000);
-                });
-            }
-
-            // Show form status message
-            showFormMessage(type, message) {
-                const formMessage = document.getElementById('formMessage');
-                formMessage.textContent = message;
-                formMessage.className = `alert alert-${type}`;
-                formMessage.style.display = 'block';
-            }
-
-            // Initialize scroll animations
-            initScrollAnimations() {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('fade-in');
-                            observer.unobserve(entry.target);
-                        }
-                    });
-                }, {
-                    threshold: 0.1
-                });
-
-                document.querySelectorAll('.card, .feature').forEach(el => {
-                    observer.observe(el);
-                });
-            }
-
-            // Register service worker for PWA capabilities
-            initServiceWorker() {
-                if ('serviceWorker' in navigator) {
-                    window.addEventListener('load', () => {
-                        navigator.serviceWorker.register('/sw.js').then(registration => {
-                            console.log('ServiceWorker registration successful');
-                        }).catch(err => {
-                            console.log('ServiceWorker registration failed: ', err);
-                        });
-                    });
+            handleSearch() {
+                const query = document.getElementById('searchInput').value.trim();
+                if (query) {
+                    alert(`Searching for: ${query}\nIn a real app, this would search the anime database.`);
+                    // You would typically call an API here and update the UI with results
                 }
+            }
+
+            toggleFavorite(button) {
+                const animeId = button.getAttribute('data-id');
+                const isFavorite = button.classList.contains('favorite');
+                
+                if (isFavorite) {
+                    // Remove from favorites
+                    this.favorites = this.favorites.filter(anime => anime.id !== animeId);
+                    button.classList.remove('favorite');
+                    button.innerHTML = '<i class="fas fa-heart"></i> Favorite';
+                } else {
+                    // Add to favorites
+                    const animeCard = button.closest('.card');
+                    const animeTitle = animeCard.querySelector('.card-title').textContent;
+                    const animeImage = animeCard.querySelector('.card-img').src;
+                    const animeRating = animeCard.querySelector('.card-rating').textContent.trim().split(' ')[1];
+                    
+                    this.favorites.push({
+                        id: animeId,
+                        title: animeTitle,
+                        image: animeImage,
+                        rating: animeRating,
+                        genre: 'Action, Fantasy', // Default for demo
+                        isFavorite: true
+                    });
+                    
+                    button.classList.add('favorite');
+                    button.innerHTML = '<i class="fas fa-heart"></i> Favorited';
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('animeFavorites', JSON.stringify(this.favorites));
+                
+                // Update favorites section
+                this.loadFavoriteAnime();
             }
         }
 
-        // Initialize the application when DOM is loaded
+        // Initialize the dashboard when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            new AppController();
+            new AnimeDashboard();
         });
     </script>
 </body>
