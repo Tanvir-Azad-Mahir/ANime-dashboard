@@ -3,203 +3,694 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Price Dashboard</title>
+    <title>Professional Crypto Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/charts.css/dist/charts.min.css">
     <style>
-        /* CSS Styles */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-            color: #333;
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --success: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
         }
         
-        .container {
-            max-width: 1200px;
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8f9fa;
+            color: var(--dark);
+            min-height: 100vh;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .dashboard-container {
+            padding: 2rem;
+            max-width: 1800px;
             margin: 0 auto;
         }
         
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
         }
         
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        
-        .crypto-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .crypto-card:hover {
+        .card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
         }
         
         .crypto-header {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
         }
         
         .crypto-icon {
             width: 40px;
             height: 40px;
-            margin-right: 15px;
+            margin-right: 12px;
         }
         
-        .crypto-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        
-        .crypto-symbol {
-            color: #7f8c8d;
-            font-size: 0.9rem;
-        }
-        
-        .price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        
-        .price-up {
-            color: #27ae60;
-        }
-        
-        .price-down {
-            color: #e74c3c;
+        .price-display {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
         }
         
         .price-change {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .positive {
+            background-color: rgba(0, 184, 148, 0.1);
+            color: var(--success);
+        }
+        
+        .negative {
+            background-color: rgba(214, 48, 49, 0.1);
+            color: var(--danger);
+        }
+        
+        .market-data {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
             font-size: 0.9rem;
         }
         
-        .market-cap {
-            color: #7f8c8d;
-            font-size: 0.9rem;
-        }
-        
-        .refresh-btn {
-            display: block;
-            margin: 30px auto;
-            padding: 10px 20px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s;
-        }
-        
-        .refresh-btn:hover {
-            background-color: #2980b9;
-        }
-        
-        .loading {
+        .market-data-item {
             text-align: center;
-            font-size: 1.2rem;
-            color: #7f8c8d;
-            margin: 50px 0;
+        }
+        
+        .market-data-label {
+            color: #636e72;
+            font-size: 0.8rem;
+        }
+        
+        .market-data-value {
+            font-weight: 600;
+        }
+        
+        .chart-container {
+            height: 200px;
+            margin-top: 1rem;
+        }
+        
+        .timeframe-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .timeframe-btn {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            background: transparent;
+            border: 1px solid #dfe6e9;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .timeframe-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .news-card {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .news-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        .news-source {
+            font-size: 0.8rem;
+            color: #636e72;
+            margin-bottom: 0.25rem;
+        }
+        
+        .news-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        
+        .news-time {
+            font-size: 0.75rem;
+            color: #b2bec3;
+        }
+        
+        .search-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        .search-input {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid #dfe6e9;
+            width: 100%;
+            font-size: 1rem;
+            padding-left: 3rem;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #636e72;
+        }
+        
+        .watchlist-btn {
+            position: absolute;
+            right: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
         }
         
         @media (max-width: 768px) {
-            .dashboard {
-                grid-template-columns: 1fr;
+            .price-display {
+                font-size: 1.5rem;
+            }
+            
+            .dashboard-container {
+                padding: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Cryptocurrency Price Dashboard</h1>
-        <div class="dashboard" id="crypto-dashboard">
-            <div class="loading">Loading cryptocurrency data...</div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-currency-bitcoin me-2"></i>CryptoVision Pro
+            </a>
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <small class="text-muted">Last updated:</small>
+                    <span id="last-updated">Just now</span>
+                </div>
+                <button class="btn btn-outline-primary btn-sm" id="refresh-btn">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                </button>
+            </div>
         </div>
-        <button class="refresh-btn" id="refresh-btn">Refresh Data</button>
-    </div>
+    </nav>
 
-    <script>
-        // JavaScript
-        document.addEventListener('DOMContentLoaded', function() {
-            const coins = [
-                { id: 'bitcoin', name: 'Bitcoin', symbol: 'BTC' },
-                { id: 'ethereum', name: 'Ethereum', symbol: 'ETH' },
-                { id: 'solana', name: 'Solana', symbol: 'SOL' },
-                { id: 'cardano', name: 'Cardano', symbol: 'ADA' },
-                { id: 'ripple', name: 'XRP', symbol: 'XRP' },
-                { id: 'dogecoin', name: 'Dogecoin', symbol: 'DOGE' }
-            ];
-            
-            const dashboard = document.getElementById('crypto-dashboard');
-            const refreshBtn = document.getElementById('refresh-btn');
-            
-            // Fetch crypto data
-            async function fetchCryptoData() {
-                dashboard.innerHTML = '<div class="loading">Loading cryptocurrency data...</div>';
-                
-                try {
-                    const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coins.map(coin => coin.id).join(',')}&order=market_cap_desc&sparkline=false`);
-                    const data = await response.json();
-                    
-                    displayCryptoData(data);
-                } catch (error) {
-                    dashboard.innerHTML = '<div class="loading" style="color: #e74c3c;">Failed to load data. Please try again later.</div>';
-                    console.error('Error fetching data:', error);
-                }
-            }
-            
-            // Display crypto data
-            function displayCryptoData(data) {
-                dashboard.innerHTML = '';
-                
-                data.forEach(crypto => {
-                    const priceChange = crypto.price_change_percentage_24h;
-                    const changeClass = priceChange >= 0 ? 'price-up' : 'price-down';
-                    const changeIcon = priceChange >= 0 ? '↑' : '↓';
-                    
-                    const card = document.createElement('div');
-                    card.className = 'crypto-card';
-                    card.innerHTML = `
-                        <div class="crypto-header">
-                            <img src="${crypto.image}" alt="${crypto.name}" class="crypto-icon">
-                            <div>
-                                <div class="crypto-name">${crypto.name}</div>
-                                <div class="crypto-symbol">${crypto.symbol.toUpperCase()}</div>
+    <div class="dashboard-container">
+        <!-- Search and Timeframe -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="search-container">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search cryptocurrencies...">
+                    <button class="watchlist-btn">
+                        <i class="bi bi-star"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="timeframe-selector">
+                    <button class="timeframe-btn active" data-timeframe="24h">24h</button>
+                    <button class="timeframe-btn" data-timeframe="7d">7d</button>
+                    <button class="timeframe-btn" data-timeframe="30d">30d</button>
+                    <button class="timeframe-btn" data-timeframe="1y">1y</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 mb-4" id="crypto-grid">
+            <!-- Crypto cards will be inserted here -->
+            <div class="col">
+                <div class="card p-3">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts and News Section -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card p-3 mb-4">
+                    <h5 class="mb-3">BTC/USD Price Chart</h5>
+                    <div class="chart-container">
+                        <canvas id="price-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card p-3">
+                    <h5 class="mb-3">Latest Crypto News</h5>
+                    <div id="news-feed">
+                        <div class="news-card">
+                            <div class="skeleton-img"></div>
+                            <div style="flex: 1;">
+                                <div class="skeleton-line" style="width: 30%; height: 12px; margin-bottom: 8px;"></div>
+                                <div class="skeleton-line" style="width: 80%; height: 16px; margin-bottom: 8px;"></div>
+                                <div class="skeleton-line" style="width: 60%; height: 12px;"></div>
                             </div>
                         </div>
-                        <div class="price">$${crypto.current_price.toLocaleString()}</div>
-                        <div class="price-change ${changeClass}">
-                            ${changeIcon} ${Math.abs(priceChange).toFixed(2)}% (24h)
-                        </div>
-                        <div class="market-cap">Market Cap: $${crypto.market_cap.toLocaleString()}</div>
-                    `;
-                    
-                    dashboard.appendChild(card);
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.1.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-crosshair@1.2.0"></script>
+
+    <script>
+        // Configuration
+        const config = {
+            coins: ['bitcoin', 'ethereum', 'solana', 'cardano', 'ripple', 'polkadot', 'dogecoin', 'avalanche-2'],
+            currency: 'usd',
+            updateInterval: 30000, // 30 seconds
+            newsApiKey: 'YOUR_NEWSAPI_KEY' // Replace with your NewsAPI key
+        };
+
+        // DOM Elements
+        const cryptoGrid = document.getElementById('crypto-grid');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const lastUpdatedEl = document.getElementById('last-updated');
+        const priceChartEl = document.getElementById('price-chart');
+        const newsFeed = document.getElementById('news-feed');
+        const timeframeBtns = document.querySelectorAll('.timeframe-btn');
+        const searchInput = document.querySelector('.search-input');
+
+        // State
+        let priceChart;
+        let selectedTimeframe = '24h';
+        let allCoinsData = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchMarketData();
+            fetchNews();
+            setupEventListeners();
+            
+            // Auto-refresh
+            setInterval(fetchMarketData, config.updateInterval);
+        });
+
+        // Event Listeners
+        function setupEventListeners() {
+            refreshBtn.addEventListener('click', fetchMarketData);
+            
+            timeframeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    timeframeBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedTimeframe = this.dataset.timeframe;
+                    updateChart();
                 });
+            });
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                filterCoins(searchTerm);
+            });
+        }
+
+        // Fetch Market Data
+        async function fetchMarketData() {
+            try {
+                const response = await fetch(
+                    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${config.currency}&ids=${config.coins.join(',')}&order=market_cap_desc&sparkline=true&price_change_percentage=24h,7d,30d,1y`
+                );
+                
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                allCoinsData = data;
+                renderCryptoCards(data);
+                updateLastUpdated();
+                
+                // Initialize chart if not already done
+                if (!priceChart) {
+                    initializeChart();
+                } else {
+                    updateChart();
+                }
+            } catch (error) {
+                console.error('Error fetching market data:', error);
+                showError('Failed to load market data. Please try again later.');
+            }
+        }
+
+        // Render Crypto Cards
+        function renderCryptoCards(data) {
+            cryptoGrid.innerHTML = '';
+            
+            data.forEach(coin => {
+                const priceChange = getPriceChange(coin);
+                const changeClass = priceChange >= 0 ? 'positive' : 'negative';
+                const changeIcon = priceChange >= 0 ? '↑' : '↓';
+                
+                const card = document.createElement('div');
+                card.className = 'col';
+                card.innerHTML = `
+                    <div class="card p-3">
+                        <div class="crypto-header">
+                            <img src="${coin.image}" alt="${coin.name}" class="crypto-icon">
+                            <div>
+                                <h6 class="mb-0">${coin.name}</h6>
+                                <small class="text-muted">${coin.symbol.toUpperCase()}</small>
+                            </div>
+                        </div>
+                        <div class="price-display">$${coin.current_price.toLocaleString()}</div>
+                        <span class="price-change ${changeClass}">
+                            ${changeIcon} ${Math.abs(priceChange).toFixed(2)}%
+                        </span>
+                        
+                        <div class="market-data mt-3">
+                            <div class="market-data-item">
+                                <div class="market-data-label">Market Cap</div>
+                                <div class="market-data-value">$${(coin.market_cap / 1000000000).toFixed(2)}B</div>
+                            </div>
+                            <div class="market-data-item">
+                                <div class="market-data-label">Volume (24h)</div>
+                                <div class="market-data-value">$${(coin.total_volume / 1000000).toFixed(2)}M</div>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container mt-2">
+                            <canvas class="mini-chart" id="mini-chart-${coin.id}"></canvas>
+                        </div>
+                    </div>
+                `;
+                
+                cryptoGrid.appendChild(card);
+                
+                // Render mini chart
+                setTimeout(() => {
+                    renderMiniChart(coin);
+                }, 0);
+            });
+        }
+
+        // Get price change based on selected timeframe
+        function getPriceChange(coin) {
+            switch(selectedTimeframe) {
+                case '7d': return coin.price_change_percentage_7d_in_currency;
+                case '30d': return coin.price_change_percentage_30d_in_currency;
+                case '1y': return coin.price_change_percentage_1y_in_currency;
+                default: return coin.price_change_percentage_24h_in_currency;
+            }
+        }
+
+        // Initialize Main Chart
+        function initializeChart() {
+            const ctx = priceChartEl.getContext('2d');
+            
+            priceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'BTC/USD',
+                        data: [],
+                        borderColor: '#6c5ce7',
+                        backgroundColor: 'rgba(108, 92, 231, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'hour'
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Price: $${context.parsed.y.toFixed(2)}`;
+                                }
+                            }
+                        },
+                        crosshair: {
+                            line: {
+                                color: '#666',
+                                width: 1
+                            },
+                            sync: {
+                                enabled: false
+                            },
+                            zoom: {
+                                enabled: false
+                            }
+                        },
+                        zoom: {
+                            zoom: {
+                                wheel: {
+                                    enabled: true
+                                },
+                                pinch: {
+                                    enabled: true
+                                },
+                                mode: 'xy'
+                            },
+                            pan: {
+                                enabled: true,
+                                mode: 'xy'
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+            
+            updateChart();
+        }
+
+        // Update Main Chart
+        async function updateChart() {
+            try {
+                const response = await fetch(
+                    `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=${config.currency}&days=${getDaysForTimeframe()}&interval=${getIntervalForTimeframe()}`
+                );
+                
+                const data = await response.json();
+                const prices = data.prices.map(price => ({
+                    x: price[0],
+                    y: price[1]
+                }));
+                
+                priceChart.data.datasets[0].data = prices;
+                priceChart.update();
+            } catch (error) {
+                console.error('Error updating chart:', error);
+            }
+        }
+
+        // Render Mini Charts
+        function renderMiniChart(coin) {
+            const ctx = document.getElementById(`mini-chart-${coin.id}`).getContext('2d');
+            
+            const sparklineData = coin.sparkline_in_7d.price;
+            const lastPrice = coin.current_price;
+            const firstPrice = sparklineData[0];
+            const isPositive = lastPrice >= firstPrice;
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array(sparklineData.length).fill(''),
+                    datasets: [{
+                        data: sparklineData,
+                        borderColor: isPositive ? '#00b894' : '#d63031',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.4,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    elements: {
+                        line: {
+                            borderWidth: 1
+                        }
+                    }
+                }
+            });
+        }
+
+        // Fetch Crypto News
+        async function fetchNews() {
+            try {
+                const response = await fetch(
+                    `https://newsapi.org/v2/everything?q=cryptocurrency&apiKey=${config.newsApiKey}&pageSize=5&sortBy=publishedAt`
+                );
+                
+                const data = await response.json();
+                renderNews(data.articles);
+            } catch (error) {
+                console.error('Error fetching news:', error);
+                newsFeed.innerHTML = '<div class="text-muted">Failed to load news</div>';
+            }
+        }
+
+        // Render News
+        function renderNews(articles) {
+            newsFeed.innerHTML = '';
+            
+            articles.forEach(article => {
+                const newsItem = document.createElement('div');
+                newsItem.className = 'news-card';
+                
+                const img = article.urlToImage ? 
+                    `<img src="${article.urlToImage}" class="news-img" alt="${article.title}">` :
+                    '<div class="news-img bg-light d-flex align-items-center justify-content-center"><i class="bi bi-newspaper text-muted"></i></div>';
+                
+                newsItem.innerHTML = `
+                    ${img}
+                    <div>
+                        <div class="news-source">${article.source.name}</div>
+                        <h6 class="news-title">${article.title}</h6>
+                        <div class="news-time">${formatTime(article.publishedAt)}</div>
+                    </div>
+                `;
+                
+                newsItem.addEventListener('click', () => {
+                    window.open(article.url, '_blank');
+                });
+                
+                newsFeed.appendChild(newsItem);
+            });
+        }
+
+        // Helper Functions
+        function updateLastUpdated() {
+            const now = new Date();
+            lastUpdatedEl.textContent = now.toLocaleTimeString();
+        }
+
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString();
+        }
+
+        function getDaysForTimeframe() {
+            switch(selectedTimeframe) {
+                case '24h': return 1;
+                case '7d': return 7;
+                case '30d': return 30;
+                case '1y': return 365;
+                default: return 1;
+            }
+        }
+
+        function getIntervalForTimeframe() {
+            switch(selectedTimeframe) {
+                case '24h': return 'hourly';
+                case '7d': return 'daily';
+                case '30d': return 'daily';
+                case '1y': return 'daily';
+                default: return 'hourly';
+            }
+        }
+
+        function filterCoins(searchTerm) {
+            if (!searchTerm) {
+                renderCryptoCards(allCoinsData);
+                return;
             }
             
-            // Initial load
-            fetchCryptoData();
+            const filtered = allCoinsData.filter(coin => 
+                coin.name.toLowerCase().includes(searchTerm) || 
+                coin.symbol.toLowerCase().includes(searchTerm)
+            );
             
-            // Refresh button
-            refreshBtn.addEventListener('click', fetchCryptoData);
-            
-            // Auto-refresh every 2 minutes
-            setInterval(fetchCryptoData, 120000);
-        });
+            renderCryptoCards(filtered);
+        }
+
+        function showError(message) {
+            cryptoGrid.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-danger">${message}</div>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>
