@@ -1,11 +1,345 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Previous head content remains the same -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepAnime Pro | Advanced Anime Analytics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Previous styles remain the same */
-        
-        /* Add this new style for error messages */
+        :root {
+            --primary: #6a5acd;
+            --secondary: #9370db;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --card-bg: #2a2a3a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+        }
+
+        [data-theme="light"] {
+            --dark: #f5f5f5;
+            --light: #1a1a2e;
+            --card-bg: #ffffff;
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a4a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg);
+        }
+
+        /* Search Bar */
+        .search-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--card-bg);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #searchInput {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        #searchButton {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        #searchButton:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        /* Dashboard Grid */
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* Anime Card */
+        .anime-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .anime-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .anime-poster {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+        }
+
+        .anime-details {
+            padding: 1.5rem;
+        }
+
+        .anime-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .anime-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .meta-item {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .rating {
+            background: rgba(40, 167, 69, 0.2);
+            color: var(--success);
+        }
+
+        .episodes {
+            background: rgba(220, 53, 69, 0.2);
+            color: var(--danger);
+        }
+
+        .status {
+            background: rgba(108, 117, 125, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .anime-synopsis {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .anime-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .btn-trailer, .btn-share {
+            padding: 0.6rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: transform 0.2s;
+        }
+
+        .btn-trailer {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-share {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-trailer:hover, .btn-share:hover {
+            transform: scale(1.05);
+        }
+
+        /* Stats & Charts */
+        .stats-container {
+            grid-column: span 2;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 1rem;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        /* Characters Section */
+        .characters-section {
+            grid-column: span 2;
+        }
+
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 1rem;
+        }
+
+        .character-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .character-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .character-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .character-info {
+            padding: 1rem;
+        }
+
+        .character-name {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            color: var(--text-primary);
+        }
+
+        .character-role, .voice-actor {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 5px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Messages */
+        .welcome-message {
+            grid-column: span 2;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
         .error-message {
             grid-column: span 2;
             text-align: center;
@@ -13,18 +347,44 @@
             color: var(--danger);
             font-weight: bold;
         }
-        
-        .welcome-message {
-            grid-column: span 2;
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-secondary);
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            .characters-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            .anime-card {
+                grid-column: span 1;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Previous header and search bar remain the same -->
+    <!-- Header with Theme Toggle -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-star"></i>
+                <h1>DeepAnime <span style="font-size: 0.8rem; opacity: 0.8;">Pro</span></h1>
+            </div>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </header>
 
+    <!-- Search Bar -->
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search for anime... (e.g., 'Attack on Titan')">
+            <button id="searchButton"><i class="fas fa-search"></i> Search</button>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
     <div class="dashboard" id="dashboard">
         <div class="welcome-message">
             <h2>Welcome to DeepAnime Pro</h2>
@@ -33,7 +393,62 @@
     </div>
 
     <script>
-        // ====== Updated Anime Search Function ======
+        // ====== DOM Elements ======
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const dashboard = document.getElementById('dashboard');
+        const themeToggle = document.getElementById('themeToggle');
+        let currentTheme = 'dark';
+
+        // ====== Charts ======
+        let ratingChart, sentimentChart;
+
+        // ====== Debounce Search ======
+        let debounceTimer;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                if (searchInput.value.trim().length > 2) {
+                    searchAnime();
+                }
+            }, 500);
+        });
+
+        // ====== Theme Toggle ======
+        themeToggle.addEventListener('click', () => {
+            if (currentTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                currentTheme = 'light';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                currentTheme = 'dark';
+            }
+            
+            // Update charts to match theme
+            if (ratingChart) updateChartColors();
+        });
+
+        function updateChartColors() {
+            const textColor = currentTheme === 'dark' ? '#ffffff' : '#1a1a2e';
+            
+            if (ratingChart) {
+                ratingChart.options.plugins.title.color = textColor;
+                ratingChart.options.plugins.legend.labels.color = textColor;
+                ratingChart.options.scales.x.ticks.color = textColor;
+                ratingChart.options.scales.y.ticks.color = textColor;
+                ratingChart.update();
+            }
+            
+            if (sentimentChart) {
+                sentimentChart.options.plugins.title.color = textColor;
+                sentimentChart.options.plugins.legend.labels.color = textColor;
+                sentimentChart.update();
+            }
+        }
+
+        // ====== Search Anime Function ======
         async function searchAnime() {
             const query = searchInput.value.trim();
             if (!query) return;
@@ -46,7 +461,7 @@
             `;
 
             try {
-                // Fetch anime data from Jikan API (updated endpoint)
+                // Fetch anime data from Jikan API
                 const { data } = await axios.get(`https://api.jikan.moe/v4/anime?q=${query}&limit=1`);
                 
                 if (!data.data || data.data.length === 0) {
@@ -57,11 +472,14 @@
                 const anime = data.data[0];
                 renderAnimeDashboard(anime);
 
-                // Fetch characters data (updated endpoint)
+                // Fetch additional data (characters, stats)
                 try {
                     const charactersRes = await axios.get(`https://api.jikan.moe/v4/anime/${anime.mal_id}/characters`);
                     if (charactersRes.data.data) {
                         renderCharacters(charactersRes.data.data);
+                    } else {
+                        document.getElementById('charactersGrid').innerHTML = 
+                            `<div class="error-message">No character data available</div>`;
                     }
                 } catch (charError) {
                     console.log("Couldn't load characters:", charError);
@@ -72,13 +490,18 @@
                 // Generate charts
                 generateCharts(anime);
 
+                // Animate elements
+                gsap.from(".anime-card", { y: 50, opacity: 0, duration: 0.8, delay: 0.2 });
+                gsap.from(".stats-container", { y: 50, opacity: 0, duration: 0.8, delay: 0.4 });
+                gsap.from(".characters-section", { y: 50, opacity: 0, duration: 0.8, delay: 0.6 });
+
             } catch (error) {
                 console.error("Error fetching data:", error);
                 dashboard.innerHTML = `<div class="error-message">Failed to load data. Please try again later.</div>`;
             }
         }
 
-        // ====== Updated Render Function ======
+        // ====== Render Anime Dashboard ======
         function renderAnimeDashboard(anime) {
             // Check if required properties exist
             const title = anime.title || anime.title_english || "Unknown Title";
@@ -89,6 +512,7 @@
             const aired = anime.aired?.string || "Unknown date";
             const status = anime.status || "Unknown";
             const synopsis = anime.synopsis || "No synopsis available.";
+            const trailerUrl = anime.trailer?.url || null;
 
             dashboard.innerHTML = `
                 <!-- Main Anime Card -->
@@ -105,10 +529,10 @@
                         </div>
                         <p class="anime-synopsis">${synopsis}</p>
                         <div class="anime-actions">
-                            <button class="btn-trailer" onclick="openTrailer('${anime.trailer?.url || ''}')">
+                            <button class="btn-trailer" onclick="openTrailer('${trailerUrl}')">
                                 <i class="fas fa-play"></i> Watch Trailer
                             </button>
-                            <button class="btn-share" onclick="shareAnime('${title}')">
+                            <button class="btn-share" onclick="shareAnime('${title.replace(/'/g, "\\'")}')">
                                 <i class="fas fa-share-alt"></i> Share
                             </button>
                         </div>
@@ -136,7 +560,7 @@
             `;
         }
 
-        // ====== Updated Characters Render Function ======
+        // ====== Render Characters ======
         function renderCharacters(characters) {
             if (!characters || characters.length === 0) {
                 document.getElementById('charactersGrid').innerHTML = 
@@ -167,7 +591,117 @@
             });
         }
 
-        // Rest of the code remains the same
+        // ====== Generate Charts ======
+        function generateCharts(anime) {
+            const textColor = currentTheme === 'dark' ? '#ffffff' : '#1a1a2e';
+            
+            // Rating Trend (Mock Data)
+            const ratingCtx = document.getElementById('ratingChart').getContext('2d');
+            ratingChart = new Chart(ratingCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Rating Trend',
+                        data: [7.5, 8.1, 8.3, 8.5, 8.7, anime.score || 8.5],
+                        borderColor: 'rgba(106, 90, 205, 0.8)',
+                        backgroundColor: 'rgba(106, 90, 205, 0.2)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Rating Trend Over Time',
+                            color: textColor,
+                            font: {
+                                size: 14
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                color: textColor
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: { color: textColor }
+                        },
+                        x: {
+                            ticks: { color: textColor }
+                        }
+                    }
+                }
+            });
+
+            // Sentiment Analysis (Mock Data)
+            const sentimentCtx = document.getElementById('sentimentChart').getContext('2d');
+            sentimentChart = new Chart(sentimentCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Negative'],
+                    datasets: [{
+                        data: [65, 25, 10],
+                        backgroundColor: [
+                            'rgba(40, 167, 69, 0.8)',
+                            'rgba(108, 117, 125, 0.8)',
+                            'rgba(220, 53, 69, 0.8)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Fan Sentiment Analysis',
+                            color: textColor,
+                            font: {
+                                size: 14
+                            }
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: textColor
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ====== Utility Functions ======
+        function openTrailer(url) {
+            if (!url) {
+                alert("No trailer available for this anime.");
+                return;
+            }
+            window.open(url, '_blank');
+        }
+
+        function shareAnime(title) {
+            if (navigator.share) {
+                navigator.share({
+                    title: `${title} | DeepAnime Pro`,
+                    text: `Check out ${title} on DeepAnime Pro!`,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                const shareUrl = `https://twitter.com/intent/tweet?text=Check out ${encodeURIComponent(title)} on DeepAnime Pro!`;
+                window.open(shareUrl, '_blank');
+            }
+        }
+
+        // Initialize
+        searchButton.addEventListener('click', searchAnime);
     </script>
 </body>
 </html>
